@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.BaseConditionsMapper">
+
+
+<!--查询基地各种情况-->
+    <select id="selectBaseData" resultType="com.sky.dto.BaseConditionsDTO">
+        SELECT
+            GROUP_CONCAT(name) AS name,
+            GROUP_CONCAT(numbers) AS numbers
+        FROM base_conditions;
+    </select>
+
+    <!--    修改基地各种情况的相关数据-->
+    <update id="updateMessage">
+        UPDATE base_conditions
+        SET numbers =#{numbers}
+        WHERE name = #{name}
+    </update>
+
+
+<!--    查询种鸽、乳鸽养殖规模(按年份)-->
+    <select id="selectFarmProductionSummary" resultType="com.sky.dto.FarmProductionSummaryDTO">
+        SELECT
+            name,
+            GROUP_CONCAT(total ORDER BY year) AS totalNumbers,
+            GROUP_CONCAT(year ORDER BY year) AS year
+        FROM (
+            SELECT
+            name,
+            YEAR(time) AS year,
+            SUM(numbers) AS total
+            FROM farm
+            WHERE YEAR(time) BETWEEN YEAR(CURDATE()) - 3 AND YEAR(CURDATE())
+            GROUP BY name, YEAR(time)
+            ) AS yearly_totals
+        GROUP BY name;
+    </select>
+
+
+    <!--    查询深加工产品分类、基地人员分布-->
+    <select id="getPersonDeep" resultType="com.sky.dto.BasePersonDeepDTO">
+        SELECT
+            GROUP_CONCAT(name) AS name,
+            GROUP_CONCAT(total_numbers) AS numbers
+        FROM (
+                 SELECT
+                     name,
+                     SUM(numbers) AS total_numbers
+                 FROM processing_types
+                 WHERE YEAR(time) = YEAR(CURDATE())
+                 GROUP BY name
+             ) AS yearly_totals
+        UNION ALL
+        SELECT
+            GROUP_CONCAT(name) AS name,
+            GROUP_CONCAT(numbers) AS numbers
+        FROM base_personnel_distribution;
+    </select>
+    <!--    修改深加工产品分类-->
+    <update id="updateDeep">
+        UPDATE processing_types
+        SET numbers =#{numbers}
+        WHERE name = #{name}
+    </update>
+    <!--    修改基地人员分布-->
+    <update id="updatePerson">
+        UPDATE base_personnel_distribution
+        SET numbers =#{numbers}
+        WHERE name = #{name}
+    </update>
+
+
+
+    <!--    查询基地经济产值走势-->
+    <select id="getAllByMoney" resultType="com.sky.dto.BaseEconomyDTO">
+
+        SELECT   GROUP_CONCAT(money ORDER BY YEAR(time))AS money,
+                 GROUP_CONCAT(YEAR(time) ORDER BY YEAR(time)) AS time
+        from base_economy_trend
+        where   YEAR(time) BETWEEN YEAR(CURDATE()) - 3 AND YEAR(CURDATE());
+    </select>
+
+    <!--    修改基地经济产值走势-->
+    <update id="updateMoney">
+        UPDATE base_economy_trend
+        SET money =#{money}
+        WHERE YEAR(time) = #{time}
+    </update>
+</mapper>

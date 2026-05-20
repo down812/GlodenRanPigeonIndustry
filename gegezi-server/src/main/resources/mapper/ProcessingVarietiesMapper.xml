@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.ProcessingVarietiesMapper">
+
+    <resultMap id="BaseResultMap" type="com.sky.entity.ProcessingVarieties">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="numbers" column="numbers" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,numbers
+    </sql>
+
+    <!-- 查询加工品种信息 -->
+    <select id="getVarieties" resultType="com.sky.entity.ProcessingVarieties">
+        SELECT id,name,numbers
+        FROM processing_varieties;
+    </select>
+    <update id="updateProcessingVarieties" parameterType="com.sky.entity.ProcessingVarieties">
+        UPDATE processing_varieties
+        SET name = #{name},
+            numbers = #{numbers}
+        WHERE id = #{id}
+    </update>
+
+
+
+
+
+</mapper>

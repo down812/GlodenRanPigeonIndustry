@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.BaseGreenhouseMapper">
+
+<!--    查询基地大棚生产信息-->
+    <select id="getBaseGreenhouse" resultType="com.sky.dto.BaseGreenhouseDTO">
+   SELECT
+     GROUP_CONCAT(CONCAT_WS(',', '种鸽数量', '乳鸽数量', '鸽蛋数量', '鸽蛋总产量')) AS name,
+     GROUP_CONCAT(CONCAT_WS(',', number_of_breeding_pairs, number_of_poultry, number_of_eggs, total_egg_production)) AS numbers
+   FROM base_greenhouse
+   UNION ALL
+   SELECT
+     GROUP_CONCAT(CONCAT_WS(',', '大棚温度', '大棚湿度')) AS name,
+     GROUP_CONCAT(CONCAT_WS(',', temperature, humidity)) AS numbers
+   FROM temperature_data
+   UNION ALL
+   SELECT
+     GROUP_CONCAT(name) AS name,
+     GROUP_CONCAT(numbers) AS numbers
+   FROM incubation_record;
+ </select>
+
+    <!--    修改基地大棚生产信息-->
+    <update id="updateBase">
+        UPDATE base_greenhouse
+        <set>
+            <if test="numberOfBreedingPairs != null">
+                number_of_breeding_pairs = #{numberOfBreedingPairs},
+            </if>
+            <if test="numberOfPoultry != null">
+                number_of_poultry = #{numberOfPoultry},
+            </if>
+            <if test="numberOfEggs != null">
+                number_of_eggs = #{numberOfEggs},
+            </if>
+            <if test="totalEggProduction != null">
+                total_egg_production = #{totalEggProduction}
+            </if>
+        </set>
+    </update>
+
+<!--    修改孵化机记录分布-->
+    <update id="updateRecord">
+        UPDATE incubation_record
+        SET numbers =#{numbers}
+        WHERE name = #{name}
+    </update>
+
+<!--  根据季度查询乳鸽出栏数、鸽蛋各种异常-->
+  <select id="getQuarter" resultType="com.sky.dto.QuarterDTO">
+    SELECT
+      GROUP_CONCAT(COALESCE(f.numbers1, 0) ORDER BY q.quarter_sort) AS numbers1,
+      GROUP_CONCAT(COALESCE(e.numbers2, 0) ORDER BY q.quarter_sort) AS numbers2,
+      GROUP_CONCAT(COALESCE(e.numbers3, 0) ORDER BY q.quarter_sort) AS numbers3,
+      GROUP_CONCAT(COALESCE(e.numbers4, 0) ORDER BY q.quarter_sort) AS numbers4,
+      '第一季度,第二季度,第三季度,第四季度' AS quarters
+    FROM (
+           SELECT 1 as quarter_sort UNION SELECT 2 UNION SELECT 3 UNION SELECT 4
+         ) q
+           LEFT JOIN (
+      SELECT
+        SUM(out_gove) AS numbers1,
+        QUARTER(time) AS quarter_num
+      FROM farm
+      WHERE YEAR(time) = YEAR(CURDATE())
+        AND name = '乳鸽'
+      GROUP BY quarter_num
+    ) f ON q.quarter_sort = f.quarter_num
+           LEFT JOIN (
+      SELECT
+        SUM(CASE WHEN name = '未受精' THEN sum ELSE 0 END) AS numbers2,
+        SUM(CASE WHEN name = '单蛋' THEN sum ELSE 0 END) AS numbers3,
+        SUM(CASE WHEN name = '坏蛋' THEN sum ELSE 0 END) AS numbers4,
+        QUARTER(time) AS quarter_num
+      FROM pigeon_egg_status
+      WHERE YEAR(time) = YEAR(CURDATE())
+      GROUP BY quarter_num
+    ) e ON q.quarter_sort = e.quarter_num;
+  </select>
+
+
+<!--  查询鸽龄分布-->
+  <select id="getAger" resultType="com.sky.dto.AgeDTO">
+    SELECT
+      GROUP_CONCAT(`range` SEPARATOR ',') AS `range`,
+      GROUP_CONCAT(numbers SEPARATOR ',') AS numbers
+    FROM pigeon_age_steps;
+  </select>
+
+<!--    修改鸽龄分步-->
+    <update id="updateAger">
+        UPDATE pigeon_age_steps
+        SET numbers =#{numbers}
+        WHERE `range` = #{range}
+    </update>
+
+</mapper>

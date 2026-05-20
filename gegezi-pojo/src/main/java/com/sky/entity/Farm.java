@@ -1,0 +1,26 @@
+package com.sky.entity;
+
+
+import lombok.Data;
+
+import java.io.Serializable;
+import java.util.Date;
+
+
+
+@Data
+public class Farm implements Serializable {
+    private Integer id;
+
+    private String name;
+
+    private Integer outGove;
+
+    private Integer inGove;
+
+    private Integer numbers;
+
+    private String time;
+
+    private static final long serialVersionUID = 1L;
+}

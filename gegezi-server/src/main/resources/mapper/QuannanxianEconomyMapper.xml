@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.QuannanxianEconomyMapper">
+
+    <resultMap id="BaseResultMap" type="com.sky.entity.QuannanxianEconomy">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="totalEconomy" column="total_economy" jdbcType="INTEGER"/>
+            <result property="farmingEnterprises" column="farming_enterprises" jdbcType="INTEGER"/>
+            <result property="employees" column="employees" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,total_economy,farming_enterprises,
+        employees
+    </sql>
+    <select id="getGDEcono" resultType="com.sky.entity.QuannanxianEconomy">
+        select * from quannanxian_economy ;
+    </select>
+
+    <update id="updateGDEcono" parameterType="com.sky.entity.QuannanxianEconomy">
+        update quannanxian_economy
+        <set>
+            <if test="totalEconomy != null">
+                total_economy = #{totalEconomy},
+            </if>
+            <if test="farmingEnterprises != null">
+                farming_enterprises = #{farmingEnterprises},
+            </if>
+            <if test="employees != null">
+                employees = #{employees},
+            </if>
+        </set>
+    </update>
+</mapper>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.ProcessingTypesMapper">
+
+    <resultMap id="BaseResultMap" type="com.sky.entity.ProcessingTypes">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="numbers" column="numbers" jdbcType="INTEGER"/>
+            <result property="time" column="time" jdbcType="DATE"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,numbers,
+        time
+    </sql>
+
+    <update id="updateProcessingTypes" parameterType="com.sky.entity.ProcessingTypes">
+        UPDATE processing_types
+        SET numbers = #{numbers}
+        WHERE name = #{name} AND DATE(time) = DATE(#{time})
+    </update>
+
+    <select id="existsByTimeAndName" resultType="int">
+        SELECT COUNT(*) FROM processing_types
+        WHERE time = #{time} AND name = #{name}
+    </select>
+
+    <insert id="insert" parameterType="com.sky.entity.ProcessingTypes">
+        INSERT INTO processing_types ( name, numbers, time)
+        VALUES ( #{name}, #{numbers}, #{time})
+    </insert>
+
+    <delete id="deleteByTimeAndName">
+        DELETE FROM processing_types
+        WHERE time = #{time} AND name = #{name}
+    </delete>
+
+
+    <select id="getTotalByLast7Days" resultType="com.sky.entity.ProcessingTypes">
+        SELECT id, name, numbers, time
+        FROM processing_types
+        WHERE time IN
+        <foreach collection="list" item="date" open="(" separator="," close=")">
+            #{date}
+        </foreach>
+    </select>
+
+    <select id="getTotalByDate" resultType="com.sky.entity.ProcessingTypes">
+            /*SELECT
+                numbers
+            FROM processing_types
+            WHERE time = #{today}*/
+            SELECT
+                SUM(numbers) AS numbers,
+                DATE(#{today}) AS time
+            FROM processing_types
+            WHERE DATE(time) = DATE(#{today})
+    </select>
+    <select id="getTotalByDays" resultType="com.sky.entity.ProcessingTypes">
+
+            SELECT
+            YEAR(time) AS year,
+            MONTH(time) AS month,
+            DAY(time) AS day,
+            SUM(numbers) AS numbers
+            FROM
+        processing_types
+            WHERE
+            DATE(time) IN
+            <foreach collection="list" item="date" open="(" separator="," close=")">
+                DATE(#{date})
+            </foreach>
+            GROUP BY
+            YEAR(time), MONTH(time), DAY(time)
+
+    </select>
+    <select id="getTotalByMonths" resultType="com.sky.entity.ProcessingTypes">
+        SELECT numbers, time
+        FROM processing_types
+        WHERE DATE_FORMAT(time, '%Y-%m') IN
+        <foreach collection="dates" item="date" open="(" separator="," close=")">
+            DATE_FORMAT(#{date}, '%Y-%m')
+        </foreach>
+    </select>
+    <select id="getDailySummary" resultType="com.sky.entity.ProcessingTypes">
+        SELECT
+
+            SUM(numbers) AS numbers,
+            DATE(#{date}) AS time
+        FROM processing_types
+        WHERE DATE(time) = DATE(#{date})
+        GROUP BY DATE(time)
+    </select>
+
+
+</mapper>

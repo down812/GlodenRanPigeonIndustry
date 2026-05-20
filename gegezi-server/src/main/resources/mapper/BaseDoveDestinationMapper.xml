@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.BaseDoveDestinationMapper">
+
+
+    <!--    查询基地乳鸽去向-->
+    <select id="getDestination" resultType="com.sky.dto.BaseDoveDestinationDTO">
+        SELECT GROUP_CONCAT(name) AS name,GROUP_CONCAT(numbers)AS numbers from base_dove_destination;
+    </select>
+
+
+<!--    修改基地乳鸽去向的相关数据-->
+    <update id="updateNumbersByName">
+        UPDATE base_dove_destination
+        SET numbers =#{numbers}
+        WHERE name = #{name}
+    </update>
+
+<!--    &lt;!&ndash;   修改基地乳鸽去向的相关数据 &ndash;&gt;-->
+<!--    <update id="updateNameAndNumber" >-->
+<!--        UPDATE base_dove_destination-->
+<!--        SET name = #{newName},-->
+<!--            numbers = #{numbers}-->
+<!--        WHERE name = #{oldName}-->
+<!--    </update>-->
+
+<!--    &lt;!&ndash;        新增基地乳鸽去向&ndash;&gt;-->
+<!--    <insert id="insertDestination">-->
+<!--        INSERT INTO base_dove_destination(name, numbers)-->
+<!--        VALUES(#{name}, #{numbers})-->
+<!--    </insert>-->
+
+<!--    &lt;!&ndash;根据名字删除&ndash;&gt;-->
+<!--    <delete id="deleteByName">-->
+<!--        DELETE FROM base_dove_destination-->
+<!--        WHERE name = #{name}-->
+<!--    </delete>-->
+
+</mapper>

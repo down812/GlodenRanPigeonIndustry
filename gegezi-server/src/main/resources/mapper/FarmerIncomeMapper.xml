@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.FarmerIncomeMapper">
+
+    <resultMap id="BaseResultMap" type="com.sky.entity.FarmerIncome">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="numbers" column="numbers" jdbcType="DECIMAL"/>
+            <result property="time" column="time" jdbcType="DATE"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,numbers,
+        time
+    </sql>
+    <select id="getFarmerIncome" resultType="com.sky.entity.FarmerIncome">
+        SELECT
+            YEAR(time) as time,
+            AVG(numbers) as numbers
+        FROM
+            farmer_income
+        where name=#{name}
+        GROUP BY
+            YEAR(time)
+        order by YEAR(time) ;
+    </select>
+
+    <update id="updateFarmerIncome" parameterType="com.sky.entity.FarmerIncome">
+        update farmer_income
+        set
+            numbers = #{numbers}
+        where name = #{name} and Year(time) = #{time} ;
+    </update>
+
+    <insert id="insertFarmerIncome" parameterType="com.sky.entity.FarmerIncome">
+        insert into farmer_income(name,numbers,time)
+        values (#{name},#{numbers},#{time});
+    </insert>
+
+    <delete id="deleteFarmerIncome" parameterType="string">
+        delete from farmer_income where name=#{name} and year(time)= #{time} ;
+    </delete>
+
+    <select id="getFarmerIncomeSin" parameterType="com.sky.entity.FarmerIncome" resultType="com.sky.entity.FarmerIncome">
+        select * from farmer_income where name=#{name} and Year(time)=#{time} ;
+    </select>
+</mapper>

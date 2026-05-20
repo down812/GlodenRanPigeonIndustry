@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.BaseEconomyTrendMapper">
+<select id="getBaseEconomyTrend" resultType="com.sky.entity.BaseEconomyTrend">
+    select
+        SUM(money) as money,
+        YEAR(time) as time
+    from base_economy_trend
+    group by YEAR(time);
+</select>
+
+    <update id="updateBaseEconomyTrend" parameterType="com.sky.entity.BaseEconomyTrend">
+        update base_economy_trend
+         set
+            <if test="money != null">
+                money = #{money}
+            </if>
+        where time=#{time}
+    </update>
+
+    <insert id="insertBaseEconomyTrend" parameterType="com.sky.entity.BaseEconomyTrend">
+        insert into base_economy_trend(money,time)
+        values(#{money},#{time})
+    </insert>
+
+    <delete id="deleteBaseEconomyTrend" parameterType="java.lang.String">
+        delete from base_economy_trend
+        where time=#{time}
+    </delete>
+</mapper>

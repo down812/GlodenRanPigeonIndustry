@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.SalesTrendMapper">
+
+    <resultMap id="BaseResultMap" type="com.sky.entity.SalesTrend">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="price" column="price" jdbcType="INTEGER"/>
+            <result property="sale" column="sale" jdbcType="INTEGER"/>
+            <result property="time" column="time" jdbcType="DATE"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,price,
+        sale,time
+    </sql>
+    <select id="getSaleTrend" resultType="com.sky.entity.SalesTrend">
+        SELECT
+            DATE_FORMAT(time, '%Y-%m') AS time,
+            name,
+            AVG(price) AS  price
+        FROM
+            sales_trend
+        where name=#{name} and time >= #{startDate} and #{endDate} > time
+        GROUP BY
+            DATE_FORMAT(time, '%Y-%m')
+        ;
+    </select>
+
+
+    <select id="getSaleStatusSin" resultType="com.sky.entity.SalesTrend">
+        select * from sales_trend where name=#{name} and time=#{time}
+    </select>
+
+    <update id="updateSaleTrend" parameterType="com.sky.entity.SalesTrend">
+        update sales_trend
+        <set>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="sale != null">
+                sale = #{sale},
+            </if>
+        </set>
+        where name=#{name} and time=#{time}
+    </update>
+
+    <insert id="insertSaleTrend" parameterType="com.sky.entity.SalesTrend">
+        insert into sales_trend(name,price,sale,time)
+        values(#{name},#{price},#{sale},#{time})
+    </insert>
+
+    <delete id="deleteSaleTrend" parameterType="java.lang.String">
+        delete from sales_trend
+        where name=#{name} and time=#{time}
+    </delete>
+</mapper>

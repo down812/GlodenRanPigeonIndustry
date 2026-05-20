@@ -1,0 +1,20 @@
+package com.sky.entity;
+
+
+import lombok.Data;
+
+import java.io.Serializable;
+import java.util.Date;
+
+@Data
+public class PigeonEggStatus implements Serializable {
+    private Integer id;
+
+    private String name;
+
+    private Integer sum;
+
+    private Date time;
+
+    private static final long serialVersionUID = 1L;
+}

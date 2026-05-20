@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.AnnualSocialFunctionsMapper">
+
+    <resultMap id="BaseResultMap" type="com.sky.entity.AnnualSocialFunctions">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="numbers" column="numbers" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,numbers
+    </sql>
+    <select id="getSocialFun" resultType="com.sky.entity.AnnualSocialFunctions">
+        select * from annual_social_functions;
+    </select>
+
+    <update id="updateSocialFun" parameterType="com.sky.entity.AnnualSocialFunctions">
+        update annual_social_functions
+        set
+            numbers = #{numbers}
+        where name = #{name};
+    </update>
+</mapper>

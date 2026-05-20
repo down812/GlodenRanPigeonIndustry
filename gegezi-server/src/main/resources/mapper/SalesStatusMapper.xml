@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.SalesStatusMapper">
+
+    <resultMap id="BaseResultMap" type="com.sky.entity.SalesStatus">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="money" column="money" jdbcType="INTEGER"/>
+            <result property="time" column="time" jdbcType="DATE"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,money,
+        time
+    </sql>
+    <select id="getSaleStatus" resultType="com.sky.entity.SalesStatus">
+        select
+        sum(money) as money,
+        DATE_FORMAT(time ,'%Y-%m') as time
+        from sales_status
+        where name= #{name} and time >= #{startDate} and  #{endDate}>=time
+        group by DATE_FORMAT(time ,'%Y-%m')
+    </select>
+
+
+    <select id="getSaleStatusByTime" resultType="com.sky.entity.SalesStatus" >
+        select * from sales_status
+        where time=#{time} and name=#{name}
+    </select>
+
+    <update id="updateSaleStatus" parameterType="com.sky.entity.SalesStatus">
+        update sales_status
+        set money= #{money}
+        where name=#{name} and time=#{time}
+    </update>
+
+    <insert id="insertSaleStatus" parameterType="com.sky.entity.SalesStatus">
+        insert into sales_status
+        (name,money,time)
+        values
+        (#{name},#{money},#{time})
+    </insert>
+
+    <delete id="deleteSaleStatus" parameterType="java.lang.String">
+        delete from sales_status
+        where name=#{name} and time=#{time}
+    </delete>
+
+
+</mapper>

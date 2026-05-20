@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.FarmMapper">
+
+    <resultMap id="BaseResultMap" type="com.sky.entity.Farm">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="outGove" column="out_Gove" jdbcType="INTEGER"/>
+            <result property="inGove" column="in_Gove" jdbcType="INTEGER"/>
+            <result property="numbers" column="numbers" jdbcType="INTEGER"/>
+            <result property="time" column="time" jdbcType="DATE"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,out_Gove,
+        in_Gove,numbers,time
+    </sql>
+    <select id="getIOSum" resultType="com.sky.entity.Farm">
+        select name,
+               sum(numbers) as numbers,
+               sum(out_gove) as out_gove,
+               sum(in_gove) as in_gove
+        from farm group by name;
+    </select>
+
+    <select id="getIOYear" resultType="com.sky.entity.Farm">
+        select SUM( out_gove) as out_gove,
+               SUM( in_gove) as in_gove,
+               DATE_FORMAT(time,'%Y') as time,
+       name
+        from farm
+        group by DATE_FORMAT(time,'%Y'),name;
+    </select>
+
+    <update id="updateFarm" parameterType="com.sky.entity.Farm">
+        update farm
+        <set>
+             <if test="outGove != null">
+                out_gove = #{outGove},
+            </if>
+            <if test="inGove != null">
+                in_gove = #{inGove},
+            </if>
+            <if test="numbers != null">
+                numbers = #{numbers},
+            </if>
+        </set>
+        where name=#{name} and YEAR(time)=#{time};
+    </update>
+
+    <select id="getFarmSin" parameterType="com.sky.entity.Farm" resultType="com.sky.entity.Farm">
+        select * from farm where name=#{name} and YEAR(time)=#{time};
+    </select>
+
+    <insert id="insertFarm" parameterType="com.sky.entity.Farm">
+        insert into farm(name,out_gove,in_gove,numbers,time)
+        values(#{name},#{outGove},#{inGove},#{numbers},#{time});
+    </insert>
+
+    <delete id="deleteFarm" parameterType="java.lang.String">
+        delete from farm where name=#{name} and YEAR(time)=#{time};
+    </delete>
+</mapper>

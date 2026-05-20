@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.QuannanxianSaleMapper">
+
+    <resultMap id="BaseResultMap" type="com.sky.entity.QuannanxianSale">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="numbers" column="numbers" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,numbers
+    </sql>
+    <select id="getSaleRatio" resultType="com.sky.entity.QuannanxianSale">
+        select name,
+               SUM(numbers)/(select SUM(numbers) from quannanxian_sale) as ratio
+        from quannanxian_sale
+        group by name;
+    </select>
+
+
+    <select id="getSaleSin" resultType="com.sky.entity.QuannanxianSale">
+        select * from quannanxian_sale where name=#{name};
+    </select>
+
+    <update id="updateSale" parameterType="com.sky.entity.QuannanxianSale">
+        update quannanxian_sale
+        set
+            numbers = #{numbers}
+        where name = #{name};
+    </update>
+
+    <insert id="insertSale" parameterType="com.sky.entity.QuannanxianSale">
+        insert into quannanxian_sale(name,numbers)
+        values (#{name},#{numbers});
+    </insert>
+
+    <delete id="deleteSale" parameterType="java.lang.String">
+        delete from quannanxian_sale where name=#{name};
+    </delete>
+</mapper>

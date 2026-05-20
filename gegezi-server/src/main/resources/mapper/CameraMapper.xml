@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.CameraMapper">
+
+    <resultMap id="BaseResultMap" type="com.sky.entity.Camera">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="deviceId" column="device_id" jdbcType="BIGINT"/>
+            <result property="cameraid" column="cameraid" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="serial" column="serial" jdbcType="VARCHAR"/>
+            <result property="no" column="no" jdbcType="INTEGER"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+            <result property="isencrypt" column="isEncrypt" jdbcType="INTEGER"/>
+            <result property="hls" column="hls" jdbcType="VARCHAR"/>
+            <result property="rtmp" column="rtmp" jdbcType="VARCHAR"/>
+            <result property="gmtCreate" column="gmt_create" jdbcType="TIMESTAMP"/>
+            <result property="gmtModified" column="gmt_modified" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+            <result property="version" column="version" jdbcType="INTEGER"/>
+    </resultMap>
+<!--    查询serial、no（设备序列号、通道号）-->
+    <select id="selectSerialAndNo" resultType="com.sky.dto.CameraDTO">
+        select serial,no from camera;
+    </select>
+
+<!--    根据serial、no（设备序列号、通道号）存入对应的直播地址url-->
+   <update id="updateHlsUrl">
+        update camera set hls=#{url} where serial=#{serial} and no=#{no};
+   </update>
+
+<!--    根据设备名字查询监控名字和对应直播地址-->
+    <select id="selectNameUrl" resultType="com.sky.dto.YSCloudDTO">
+        select name,hls from camera where name like concat('%', #{name}, '%');
+    </select>
+
+
+</mapper>

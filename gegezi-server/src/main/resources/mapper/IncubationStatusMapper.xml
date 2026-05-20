@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mapper.IncubationStatusMapper">
+
+
+    <!--查询鸽笼状态分布饼图-->
+    <select id="getPigeonCages" resultType="com.sky.dto.PigeonCagesDTO">
+        SELECT
+            GROUP_CONCAT(name) AS name,
+            GROUP_CONCAT(numbers)AS numbers
+        FROM
+            incubation_status;
+    </select>
+
+    <!--    修改基地人员分布-->
+    <update id="updateIncubation">
+        UPDATE incubation_status
+        SET numbers =#{numbers}
+        WHERE name = #{name}
+    </update>
+</mapper>
