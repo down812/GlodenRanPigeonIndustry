@@ -5,7 +5,6 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
-import com.sky.config.UserDTO;
 import com.sky.entity.User;
 import com.sky.mapper.LoginMapper;
 import com.sky.properties.JwtProperties;
@@ -109,8 +108,8 @@ public class LoginServiceImpl implements LoginService {
 
 
         //(2)将User对象转化为HashMap存储（增加空值保护）
-        UserDTO userDTO = BeanUtil.copyProperties(user, UserDTO.class);
-        Map<String, Object> userMap = BeanUtil.beanToMap(userDTO, new HashMap<>(),
+        User userDTO = BeanUtil.copyProperties(user, User.class);
+        Map<String, Object> userMap = BeanUtil.beanToMap(user, new HashMap<>(),
                 CopyOptions.create()
                         .setIgnoreNullValue(true)
                         .setFieldValueEditor((fieldName, fieldValue) ->
